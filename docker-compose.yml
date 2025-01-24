@@ -9,10 +9,21 @@ services:
       - 3001:3001
     networks:
       - dropbox_network
-    env_file: 
-      - ./apps/api/.env
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - S3_ENDPOINT_URL=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - S3_BUCKET_NAME=dropbox-local-bucket
+      - POSTGRES_DB=dropbox_db
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_PORT=5432
     depends_on:
       - localstack
+      - postgres
+
   localstack:
     image: localstack/localstack
     container_name: localstack
@@ -23,6 +34,19 @@ services:
       - GATEWAY_LISTEN=0.0.0.0:4566
     volumes:
       - "./localstack:/docker-entrypoint-initaws.d"
+    networks:
+      - dropbox_network
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: dropbox_db
+    ports:
+      - "5432:5432"
     networks:
       - dropbox_network
 
