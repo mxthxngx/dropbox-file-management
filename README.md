@@ -15,9 +15,10 @@ Build prod using new BuildKit engine
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
 ```
 
-Start prod in detached mode
+Run and build the docker image, and start a local S3 bucket
 ```
-docker-compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d --build   
+aws --endpoint-url=http://localhost:4566 s3 mb s3://dropbox-local-bucket
 ```
 
 Open `http://localhost:3001/`, serves both frontend and backend

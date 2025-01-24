@@ -9,6 +9,22 @@ services:
       - 3001:3001
     networks:
       - dropbox_network
+    env_file: 
+      - ./apps/api/.env
+    depends_on:
+      - localstack
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=s3
+      - GATEWAY_LISTEN=0.0.0.0:4566
+    volumes:
+      - "./localstack:/docker-entrypoint-initaws.d"
+    networks:
+      - dropbox_network
 
 networks:
   dropbox_network:
