@@ -1,5 +1,5 @@
 import { createServer } from "./server";
-import { log } from "@repo/logger";
+import { log } from "@dropbox/logger";
 import routes from "./routes";
 import express, { Request, Response } from "express";
 import { join } from "path";

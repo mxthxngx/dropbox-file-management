@@ -20,7 +20,6 @@ const s3 = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
   },
 });
-console.log(`S3 bucket name: ${process.env.S3_BUCKET_NAME}`);
 
 
 const upload = multer({

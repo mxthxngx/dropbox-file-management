@@ -1,5 +1,12 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@dropbox/typescript-config/react-library.json",
+  "compilerOptions": {
+    //"outDir": "dist"
+    "baseUrl": ".",
+    "paths": {
+      "@dropbox/ui/*": ["./src/*"]
+    }
+  },
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

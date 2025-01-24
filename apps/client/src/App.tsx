@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import './App.css'
-import ImageUpload from './ImageUpload';
 
+import React from 'react';
+import {Button} from '@dropbox/ui/components/button';
+import ImageUpload from './components/ImageUpload';
 function App() {
  const [greeting,setGreeting] = useState('');
  useEffect(() => {
@@ -14,6 +15,8 @@ function App() {
     <>
    {greeting}
    <ImageUpload/>
+   <Button>
+    retere </Button>
     </>
   )
 }

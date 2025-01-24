@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/styles/globals.css",
+    "baseColor": "zinc",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@dropbox/ui/components",
+    "utils": "@dropbox/ui/lib/utils",
+    "hooks": "@dropbox/ui/hooks",
+    "lib": "@dropbox/ui/lib",
+    "ui": "@dropbox/ui/components"
+  }
+}
