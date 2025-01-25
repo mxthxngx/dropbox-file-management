@@ -41,3 +41,6 @@ docker compose -f docker-dev.yml up -d --build
 aws --endpoint-url=http://localhost:4566 s3 mb s3://dropbox-local-bucket
 
 ```
+
+and then run 
+``` npm run dev ```

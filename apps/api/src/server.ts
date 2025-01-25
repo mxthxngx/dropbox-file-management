@@ -2,7 +2,8 @@ import { json, urlencoded } from "body-parser";
 import express, { type Express } from "express";
 import morgan from "morgan";
 import cors from "cors";
-
+import dotenv from "dotenv";
+dotenv.config();
 export const createServer = (): Express => {
   const app = express();
   app

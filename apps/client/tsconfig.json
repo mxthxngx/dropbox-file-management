@@ -5,6 +5,7 @@
     "outDir": "dist",
     "baseUrl": ".",
     "jsx": "react",
+    "skipLibCheck": true,
     "module": "Preserve",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
