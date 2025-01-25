@@ -3,7 +3,7 @@ FROM node:18-alpine AS base
 # Base setup for all stages
 RUN apk update
 RUN apk add --no-cache libc6-compat
-
+RUN apk add --no-cache curl
 # Builder stage
 FROM base AS builder
 WORKDIR /app

@@ -48,7 +48,7 @@ export function FileDataTable() {
   const closePreview = () => {
     setPreviewFile(null)
   }
-
+console.log(files)
   const columns: ColumnDef<FileMetadata>[] = [
     {
       accessorKey: "fileName",

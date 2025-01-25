@@ -4,12 +4,11 @@ import { FileMetadata } from '../../types/File'
 
 interface UploadStatusResponse {
   status: string,
-  message:string
+  message: string
 }
 
-
 export const manageFileApi = api.injectEndpoints({
-  endpoints:(build)=>({
+  endpoints: (build) => ({
     uploadFile: build.mutation<UploadStatusResponse, FormData>({
       query: (formData) => ({
         url: '/upload',
@@ -19,7 +18,20 @@ export const manageFileApi = api.injectEndpoints({
     }),
     getFiles: build.query<FileMetadata[], void>({
       query: () => '/get',
-      transformResponse: (response: { files: FileMetadata[] }) => response.files,
+      transformResponse: (response: { files: FileMetadata[] }) => {
+        const isProd = import.meta.env.MODE !== 'production';
+
+        const transformedFiles = response.files.map(file => {
+          const originalPath = file.s3Path;
+          const transformedPath = isProd ? originalPath : originalPath.replace('localstack', 'localhost');
+
+          return {
+            ...file,
+            s3Path: transformedPath,
+          };
+        });
+        return transformedFiles;
+      },
     }),
   })
 })
