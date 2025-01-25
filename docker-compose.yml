@@ -49,7 +49,12 @@ services:
       - "5432:5432"
     networks:
       - dropbox_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 networks:
   dropbox_network:
     external: true
+
+volumes:
+  postgres_data:

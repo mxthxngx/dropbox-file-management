@@ -6,7 +6,7 @@ class FileMetadata extends Model {
   public fileName!: string;
   public fileType!: string;
   public fileSize!: number;
-  public lastModified!: Date;
+  public uploadedAt!: Date;
   public s3Path!: string; 
 }
 
@@ -29,7 +29,7 @@ FileMetadata.init(
       type: DataTypes.INTEGER, 
       allowNull: false,
     },
-    lastModified: {
+    uploadedAt: {
       type: DataTypes.DATE,
       allowNull: false,
     },

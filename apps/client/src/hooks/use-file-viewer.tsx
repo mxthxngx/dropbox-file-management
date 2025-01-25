@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 
 import { readBuffer } from "@zoley/react-file-preview";
-import { FileMetadata } from "../types/File";
-import { MIME_TO_EXTENSION } from "../types/IconMap";
+import { FileMetadata } from "../types/file";
+import { MIME_TO_EXTENSION } from "../types/icon-map";
+import { useLoaderError } from "./use-loader-error";
 
 interface PreviewFile {
   filePath: Blob;
@@ -14,10 +15,16 @@ export function useFilePreview() {
   const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const loaderErrorComponent = useLoaderError({
+    isLoading,
+    isError: !!error,
+    error: error || "",
+});
 
   const previewFileHandler = useCallback(async (file: FileMetadata) => {
     setIsLoading(true);
     setError(null);
+    console.log("FIleeee",file);
     try {
       const response = await fetch(file.s3Path);
 
@@ -30,7 +37,6 @@ export function useFilePreview() {
 
       let fileType = file.fileType.toLowerCase();
       fileType = MIME_TO_EXTENSION[fileType] || "unknown";
-      console.log(fileType)
       setPreviewFile({ filePath, fileType, s3Path: file.s3Path });
     } catch (err) {
       console.error("Error previewing file:", err);
@@ -45,6 +51,7 @@ export function useFilePreview() {
     isLoading,
     error,
     previewFileHandler,
-    setPreviewFile
+    setPreviewFile,
+    loaderErrorComponent,
   };
 }

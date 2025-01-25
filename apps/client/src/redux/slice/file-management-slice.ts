@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FileMetadata } from '../../types/File';
+import { FileMetadata } from '../../types/file';
 import { manageFileApi } from '../rtk-query/file-manager';
 
 interface FileManagerState {

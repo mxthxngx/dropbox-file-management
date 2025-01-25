@@ -4,9 +4,8 @@ import express from "express";
 import { join } from "path";
 import syncDatabase from "./config/sync-db.config";
 import { router } from "./routes/files.route";
-import ApiError from "./utils/ApiError";
-import httpStatus from "./models/http-status.model";
 import { connectDatabase } from "./db/postgres";
+import { errorHandler } from "./middlewares/error-handler";
 
 const port = process.env.PORT || 3001;
 const server = createServer();
@@ -14,9 +13,7 @@ connectDatabase();
 syncDatabase();
 server.use("/api", router);
 server.use(express.static(join(__dirname, "../..", "client", "dist"))); 
+server.use(errorHandler);
 server.listen(port, () => {
   log(`API running on http://localhost:${port}`);
-});
-server.use((req, res, next) => {
-	next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });

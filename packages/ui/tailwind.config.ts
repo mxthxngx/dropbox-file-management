@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 import tailwindcssAnimate from 'tailwindcss-animate'
 import tailwindcssTypography from '@tailwindcss/typography'
-
+import tailwind_scrollbar from 'tailwind-scrollbar'
 const config = {
   darkMode: ['class'],
   content: [
@@ -59,6 +59,7 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        'custom-gray':'#272729'
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -81,7 +82,7 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate, tailwindcssTypography],
+  plugins: [tailwindcssAnimate, tailwindcssTypography, tailwind_scrollbar],
 } satisfies Config
 
 export default config

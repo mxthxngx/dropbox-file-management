@@ -7,11 +7,13 @@ import {
   Separator
 } from "@dropbox/ui/components/separator"
 
-import FileExplorerHeading from '../components/FileExplorerHeading'
-import { FileExplorerBody } from '../components/FileExplorerBody'
+import FileExplorerHeading from '../components/file-explorer-heading'
+import { FileExplorerBody } from '../components/file-explorer-body'
+import Layout from '../layout'
 
 export default function FileExplorer() {
   return (
+    <Layout>
     <Card className="w-9/12">
       <FileExplorerHeading/>
     <CardContent>
@@ -20,5 +22,6 @@ export default function FileExplorer() {
     </CardContent>
 
   </Card>
+  </Layout>
   )
 }

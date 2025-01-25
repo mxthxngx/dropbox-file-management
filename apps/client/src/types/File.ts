@@ -3,6 +3,6 @@ export interface FileMetadata {
     fileName: string,
     fileType: string,
     fileSize: number,
-    lastModified: Date,
+    uploadedAt: Date,
     s3Path: string
     }

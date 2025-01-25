@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { FolderPlus } from 'lucide-react'
-import IconTextItem from './IconTextItem'
+import IconTextItem from './icon-text-item'
 
 export default function AddFolder() {
   return (

@@ -1,6 +1,6 @@
 import { CardDescription, CardHeader, CardTitle } from '@dropbox/ui/components/card'
 import React from 'react'
-import AddFile from './common/AddFile'
+import AddFile from './common/add-file'
 import { useAppSelector } from '../redux/store'
 
 export default function FileExplorerHeading() {

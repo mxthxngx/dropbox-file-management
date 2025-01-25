@@ -1,6 +1,6 @@
 import React from 'react';
 import { Folder as FolderIcon } from 'lucide-react';
-import IconTextItem from './IconTextItem'
+import IconTextItem from './icon-text-item'
 
 export default function Folder() {
   return (

@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Download } from "lucide-react"
 
 import { Button } from "@dropbox/ui/components/button"
 import {
@@ -30,11 +30,15 @@ import {
   TableRow,
 } from "@dropbox/ui/components/table"
 import { useAppSelector } from "../redux/store"
-import { FileMetadata } from "../types/File"
-import { getFileTypeIcon, formatFileSize, MIME_TO_EXTENSION } from "../types/IconMap"
-import { ButtonVariantType } from "../types/ButtonVariant"
+import { FileMetadata } from "../types/file"
+import { getFileTypeIcon, formatFileSize } from "../types/icon-map"
+import { ButtonVariantType } from "../types/button-variant"
 import { useFilePreview } from "../hooks/use-file-viewer"
-import FilePreview from "./common/FilePreview"
+import FilePreview from "./common/file-preview"
+import { useCopyToClipboard } from "../hooks/use-clipboard"
+import { useDownload } from "../hooks/use-download"
+import IconTextItem from "./common/icon-text-item"
+import { useNewTab } from "../hooks/use-new-tab"
 
 export function FileDataTable() {
  
@@ -42,13 +46,16 @@ export function FileDataTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { previewFile, isLoading, error, previewFileHandler,setPreviewFile } = useFilePreview()
-
+  const { previewFile, isLoading, error, previewFileHandler,setPreviewFile,loaderErrorComponent } = useFilePreview()
+  const { CopyButton} = useCopyToClipboard()
+  const { download } = useDownload()
+  const {NewTabIcon} = useNewTab()
   const files = useAppSelector((state) => state.fileManagement.files)
   const closePreview = () => {
     setPreviewFile(null)
   }
-console.log(files)
+
+
   const columns: ColumnDef<FileMetadata>[] = [
     {
       accessorKey: "fileName",
@@ -59,24 +66,45 @@ console.log(files)
           className="w-full justify-start"
         >
           File Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
         const FileIcon = getFileTypeIcon(row.original.fileType)
         return (
           <div
-          className="flex items-center space-x-2 cursor-pointer hover:underline"
+          className="flex items-center space-x-2 cursor-pointer"
           onClick={() => previewFileHandler(row.original)}
         >
-          <FileIcon className="h-4 w-4 text-gray-500" />
-          <span className="lowercase truncate max-w-[150px]">
-            {row.getValue("fileName")}
-          </span>
+          <IconTextItem textClassName="truncate max-w-[250px]" icon={ <FileIcon className="h-4 w-4 text-gray-500" />} title={row.getValue("fileName").toString()} onClick={() => previewFileHandler(row.original)} />
         </div>
         )
       },
     },
+    {
+      accessorKey: "Open",
+      header: ({ column }) => (
+          <div className="flex items-center justify-center">
+              Open
+          </div>
+      ),
+      cell: ({ row }) => {
+          const fileId: string = row.original.id;
+          return <NewTabIcon fileId={fileId} />;
+      },
+      },
+    {
+      accessorKey: "s3Path",
+      header: ({ column }) => (
+          <div className="flex items-center justify-center">
+              Path
+          </div>
+      ),
+      cell: ({ row }) => {
+          const pathToCopy: string = row.getValue("s3Path");
+          return <CopyButton text={pathToCopy} />;
+      },
+      },
     {
       accessorKey: "fileType",
       header: "File Type",
@@ -91,22 +119,46 @@ console.log(files)
       },
     },
     {
-      accessorKey: "lastModified",
+      accessorKey: "uploadedAt",
       header: ({ column }) => (
+        
         <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full justify-start"
-        >
-          Uploaded at
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="w-full justify-end "
+      >
+        Uploaded at
+        <ArrowUpDown className="ml-1 h-4 w-4" />
+      </Button>
       ),
       cell: ({ row }) => {
-        const date = new Date(row.getValue("lastModified"))
-        return <div>{date.toLocaleDateString()} {date.toLocaleTimeString()}</div>
+        const date = new Date(row.getValue("uploadedAt"))
+        return <div className=" text-right p-2">
+        {date.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })}{" "}
+        {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+      </div>
       },
     },
+    {
+      accessorKey: "Download",
+      header: "Download",
+      cell: ({ row }) => {
+        const s3Path:string = row.getValue("s3Path")
+        return (
+          <Button
+            variant={ButtonVariantType.Ghost}
+            onClick={() => download(s3Path)}
+          >
+            <Download />
+          </Button>
+        )
+      },
+    }
+
   ]
 
   const table = useReactTable({
@@ -166,7 +218,7 @@ console.log(files)
       </div>
 
      
-        <div className="rounded-md border overflow-x-auto">
+        <div className="rounded-md border">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -174,7 +226,7 @@ console.log(files)
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="dark:bg-muted/50 bg-gray-200 whitespace-nowrap"
+                      className="dark:bg-zinc-900  bg-gray-200 whitespace-nowrap sticky top-0 z-1"
                     >
                       {header.isPlaceholder
                         ? null
@@ -221,6 +273,7 @@ console.log(files)
         {previewFile && (
       <FilePreview s3Path={previewFile.s3Path} filePathBlob={previewFile.filePath} fileType={previewFile.fileType} error={error} isLoading={isLoading} onClose={closePreview}/>
       )}
+      {error && loaderErrorComponent}
     </div>
   )
 }

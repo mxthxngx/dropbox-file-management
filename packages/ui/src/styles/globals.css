@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body,:root{
+html,body,:root {
   height: 100%;
 }
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -33,7 +34,13 @@ html,body,:root{
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* Scrollbar Colors for Light Theme */
+    --scrollbar-track: 240 4.8% 95.9%;
+    --scrollbar-thumb: 240 5.9% 90%;
+    --scrollbar-thumb-hover: 240 5.9% 85%;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -53,13 +60,18 @@ html,body,:root{
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --blue: 210 100% 60%; 
+    --blue: 210 100% 60%;
     --ring: 240 4.9% 83.9%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Scrollbar Colors for Dark Theme */
+    --scrollbar-track: 240 3.7% 15.9%;
+    --scrollbar-thumb: 240 3.7% 25.9%;
+    --scrollbar-thumb-hover: 240 3.7% 35.9%;
   }
 }
 
@@ -67,7 +79,31 @@ html,body,:root{
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  * {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: hsl(var(--scrollbar-thumb)) hsl(var(--scrollbar-track)); /* For Firefox */
+  }
+
+  *::-webkit-scrollbar {
+    @apply w-2 h-2; 
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-[hsl(var(--scrollbar-track))] rounded-md; 
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-[hsl(var(--scrollbar-thumb))] rounded-md; 
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    @apply bg-[hsl(var(--scrollbar-thumb-hover))]; 
   }
 }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import FileExplorer from './pages/FileExplorer';
+import FileExplorer from './pages/file-explorer';
 import { MoonStarIcon } from 'lucide-react';
 import { Button } from '@dropbox/ui/components/button';
-import { ButtonVariantType } from './types/ButtonVariant';
-function App() {
+import { ButtonVariantType } from './types/button-variant';
+import { Toaster } from '@dropbox/ui/components/toaster';
+function Layout({ children }) {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
@@ -32,9 +33,11 @@ function App() {
       >
        <MoonStarIcon/>
       </Button>
-      <FileExplorer />
+     {children}
+      <Toaster/>
     </div>
   );
 }
 
-export default App;
+export default Layout;
+

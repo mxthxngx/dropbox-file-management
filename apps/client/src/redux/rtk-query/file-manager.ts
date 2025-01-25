@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { api } from './api'
-import { FileMetadata } from '../../types/File'
+import { FileMetadata } from '../../types/file'
 
 interface UploadStatusResponse {
   status: string,
@@ -33,10 +33,24 @@ export const manageFileApi = api.injectEndpoints({
         return transformedFiles;
       },
     }),
+    getFileById: build.query<FileMetadata, string>({
+      query: (id) => `/get/${id}`,
+      transformResponse: (response: { file: FileMetadata }) => {
+        const isProd = import.meta.env.MODE !== 'production';
+
+        const originalPath = response.file.s3Path;
+        const transformedPath = isProd ? originalPath : originalPath.replace('localstack', 'localhost');
+        return {
+          ...response.file,
+          s3Path: transformedPath,
+        };
+      },
+    }),
   })
 })
 
 export const {
   useUploadFileMutation,
-  useGetFilesQuery
+  useGetFilesQuery,
+  useGetFileByIdQuery
 } = manageFileApi

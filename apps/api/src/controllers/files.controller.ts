@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import s3 from "../config/s3.config";
-import ApiError from "../utils/ApiError";
-import httpStatus from "../models/http-status.model";
 import FileMetadata from "../models/file-metadata.model";
+import { error } from "console";
 
 const upload = multer({
   storage: multerS3({
@@ -20,7 +19,7 @@ const upload = multer({
 const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.file) {
-      return next(new ApiError(httpStatus.BAD_REQUEST, "No file uploaded."));
+      return next(error);
     }
 
     const fileName = req.file.originalname;
@@ -36,7 +35,7 @@ const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
       fileName: req.file.originalname,
       fileType: req.file.mimetype,
       fileSize: req.file.size,
-      lastModified: new Date(),
+      uploadedAt: new Date(),
       s3Path: fileUrl,
     });
 
@@ -46,7 +45,7 @@ const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
       fileMetadata,
     });
   } catch (error) {
-    return next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "File upload failed."));
+    return next(error);
   }
 };
 
@@ -58,8 +57,28 @@ const getFiles = async (req: Request, res: Response, next: NextFunction) => {
     }
     res.json({ files });
   } catch (error) {
-    return next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch files."));
+    return next(error);
   }
 };
 
-export { upload, uploadFile, getFiles };
+const getFileById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const fileId = req.params.id;  
+    const file = await FileMetadata.findOne({ where: { id: fileId } });
+
+    if (!file) {
+      return res.status(404).json({
+        status: "error",
+        message: "File not found",
+      });
+    }
+
+    res.json({
+      status: "success",
+      file,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+export { upload, uploadFile, getFiles,getFileById };

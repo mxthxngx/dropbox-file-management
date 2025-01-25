@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,34 +12,39 @@ import {
 
 type AlertDialogProps = {
   title: string;
-  description: string;
-  cancelText?: string;
-  confirmText?: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isOpen: boolean; 
-  onClose: () => void; 
+  cancelText?: string | null;
+  confirmText?: string | null;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  isOpen?: boolean; 
+  maxHeight?: number;
+  children?: React.ReactNode;
 };
 
 export function AlertDialogComponent({
   title,
-  description,
-  cancelText = "Cancel",
-  confirmText = "Continue",
+  cancelText ,
+  confirmText = "Confirm", 
   onConfirm,
   onCancel,
-  isOpen,
-  onClose,
+  isOpen = true,
+  children
 }: AlertDialogProps) {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog open={isOpen} >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription 
+            className={`max-w-[400px] max-h-[400px] text-wrap overflow-y-auto text-gray-300`}
+          >
+            {children}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>
+          {cancelText && (
+            <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>
+          )}
           <AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
