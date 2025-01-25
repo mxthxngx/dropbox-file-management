@@ -24,7 +24,6 @@ export function useFilePreview() {
   const previewFileHandler = useCallback(async (file: FileMetadata) => {
     setIsLoading(true);
     setError(null);
-    console.log("FIleeee",file);
     try {
       const response = await fetch(file.s3Path);
 

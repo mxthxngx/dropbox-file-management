@@ -9,6 +9,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@dropbox/ui/components/toast"
+import React from "react"
 
 export function Toaster() {
   const { toasts } = useToast()

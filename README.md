@@ -10,10 +10,6 @@ Create a common network for the containers to communicate:
 docker network create dropbox_network
 ```
 
-Build prod using new BuildKit engine
-```
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
-```
 
 Install awslocal if you dont already have 
 ```
