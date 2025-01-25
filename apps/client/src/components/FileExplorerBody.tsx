@@ -1,16 +1,11 @@
 import React, { useState } from 'react'
-import {FileDataTable} from './common/Document'
+import {FileDataTable} from './FileDataTable'
 import { useGetFilesQuery } from '../redux/rtk-query/file-manager'
 import { LoadingSpinner } from './common/Loader';
 import { AlertDialogComponent } from './common/Alert';
 import ErrorDialogComponent from './common/ErrorDialogComponent';
 export function FileExplorerBody() {
   const { data: files, isLoading, isError,error } = useGetFilesQuery();
-  const [isDialogOpen, setDialogOpen] = useState(true);
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  }
 
   if (isLoading) {
     return (

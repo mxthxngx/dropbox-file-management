@@ -41,7 +41,6 @@ import {
   }
   
   export function getFileTypeIcon(mimeType: string) {
-    // Return matching icon or default
     return FILE_TYPE_ICONS[mimeType as keyof typeof FILE_TYPE_ICONS] || FILE_TYPE_ICONS.default
   }
   
@@ -54,3 +53,37 @@ import {
     
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
+
+  export const MIME_TO_EXTENSION: Record<string, string> = {
+    // Image files
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/gif': 'gif',
+    'image/svg+xml': 'svg',
+    'image/webp': 'webp',
+  
+    // Text-based files
+    'text/plain': 'txt',
+    'text/markdown': 'md',
+    'text/html': 'html',
+    'text/css': 'css',
+  
+    // Code files
+    'application/json': 'json',
+    'application/javascript': 'js',
+    'application/typescript': 'ts',
+    'application/xml': 'xml',
+  
+    // Document files
+    'application/pdf': 'pdf',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  
+    // Archive files
+    'application/zip': 'zip',
+    'application/x-rar-compressed': 'rar',
+  
+    // Default fallback
+    'default': 'file',
+  }
+  

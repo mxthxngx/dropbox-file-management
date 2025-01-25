@@ -29,10 +29,12 @@ import {
   TableHeader,
   TableRow,
 } from "@dropbox/ui/components/table"
-import { useAppSelector } from "../../redux/store"
-import { FileMetadata } from "../../types/File"
-import { getFileTypeIcon, formatFileSize } from "../../types/IconMap"
-import { ButtonVariantType } from "../../types/ButtonVariant"
+import { useAppSelector } from "../redux/store"
+import { FileMetadata } from "../types/File"
+import { getFileTypeIcon, formatFileSize, MIME_TO_EXTENSION } from "../types/IconMap"
+import { ButtonVariantType } from "../types/ButtonVariant"
+import { useFilePreview } from "../hooks/use-file-viewer"
+import FilePreview from "./common/FilePreview"
 
 export function FileDataTable() {
  
@@ -40,9 +42,12 @@ export function FileDataTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const { previewFile, isLoading, error, previewFileHandler,setPreviewFile } = useFilePreview()
 
   const files = useAppSelector((state) => state.fileManagement.files)
-
+  const closePreview = () => {
+    setPreviewFile(null)
+  }
 
   const columns: ColumnDef<FileMetadata>[] = [
     {
@@ -60,10 +65,15 @@ export function FileDataTable() {
       cell: ({ row }) => {
         const FileIcon = getFileTypeIcon(row.original.fileType)
         return (
-          <div className="flex items-center space-x-2">
-            <FileIcon className="h-4 w-4 text-gray-500" />
-            <span className="lowercase truncate max-w-[150px]">{row.getValue("fileName")}</span>
-          </div>
+          <div
+          className="flex items-center space-x-2 cursor-pointer hover:underline"
+          onClick={() => previewFileHandler(row.original)}
+        >
+          <FileIcon className="h-4 w-4 text-gray-500" />
+          <span className="lowercase truncate max-w-[150px]">
+            {row.getValue("fileName")}
+          </span>
+        </div>
         )
       },
     },
@@ -208,7 +218,9 @@ export function FileDataTable() {
             </TableBody>
           </Table>
         </div>
-
+        {previewFile && (
+      <FilePreview s3Path={previewFile.s3Path} filePathBlob={previewFile.filePath} fileType={previewFile.fileType} error={error} isLoading={isLoading} onClose={closePreview}/>
+      )}
     </div>
   )
 }

@@ -23,7 +23,6 @@ export default function AddFile() {
       const file = (event.target as HTMLInputElement).files[0];
       if (!file) return;
 
-      // Check if file already exists in global state
       const isFileExist = files.some(f => f.fileName === file.name);
       if (isFileExist) {
         setSelectedFile(file);
