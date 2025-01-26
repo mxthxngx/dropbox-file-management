@@ -1,40 +1,51 @@
-import React, { useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import React, { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 import { FileViewer } from "@zoley/react-file-preview";
-import { AlertDialogComponent } from '../components/common/alert';
-import { useGetFileByIdQuery } from '../redux/rtk-query/file-manager';
-import { useLoaderError } from '../hooks/use-loader-error';
-import { useFilePreview } from '../hooks/use-file-viewer';
+import { AlertDialogComponent } from "../components/common/alert";
+import { useGetFileByIdQuery } from "../redux/rtk-query/file-manager";
+import { useLoaderErrorTracker } from "../hooks/use-loader-tracker";
+import { useFilePreview } from "../hooks/use-file-viewer";
+import Layout from "../layout";
 export default function FileDisplay() {
-    const { fileId } = useParams();
-    const navigate = useNavigate();
-    const { isLoading, isError, error, data: file } = useGetFileByIdQuery(fileId);
-    const loaderErrorComponent = useLoaderError({
-        isLoading,
-        isError: !!error,
-        // @ts-ignore
-        error: error ? error.status : undefined,
-    });
-    const { previewFile, previewFileHandler } = useFilePreview()
-    useEffect(() => {
-        if (file && !isLoading && !isError) {
-            previewFileHandler(file)
-        }
-    }, [file])
+  const { fileId } = useParams();
+  const navigate = useNavigate();
+  const { isLoading, isError, error, data: file, isSuccess } = useGetFileByIdQuery(fileId);
+    useLoaderErrorTracker({ isLoading, error});
+  const { previewFile, previewFileHandler } = useFilePreview();
 
-    if (!file) {
-        return <AlertDialogComponent title="File not found" onConfirm={() => navigate('/')} />;
+  useEffect(() => {
+    if (isSuccess && file) {
+      previewFileHandler(file);
     }
-
-    if(isLoading || !previewFile ||isError)
-    {
-        return loaderErrorComponent;
-    }
-    console.log(isLoading, isError, error);
+  }, [isSuccess, file, previewFileHandler]);
+  if (!file && !isLoading) {
     return (
-        <div className='w-full h-full'>
-            {(isLoading || isError) ? loaderErrorComponent : <FileViewer fileType={previewFile.fileType} filePath={previewFile.filePath} />
-            }
-        </div>
+      <AlertDialogComponent
+        title="File not found"
+        onConfirm={() => navigate("/")}
+      />
     );
-};
+  }
+
+  if (isLoading || !previewFile || isError) {
+    return null;
+  }
+
+  return (
+    <Layout>
+    <div className="w-full h-full">
+      {previewFile.fileType === "unknown" ? (
+        <div className="text-center">
+          <div>File type preview not supported, Please download to view</div>
+        </div>
+      ) : (
+        <FileViewer
+          fileType={previewFile.fileType}
+          filePath={previewFile.filePath}
+        />
+      )}
+    </div>
+    </Layout>
+  );
+}
+

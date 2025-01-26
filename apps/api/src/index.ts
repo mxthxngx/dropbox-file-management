@@ -12,7 +12,12 @@ const server = createServer();
 connectDatabase();
 syncDatabase();
 server.use("/api", router);
-server.use(express.static(join(__dirname, "../..", "client", "dist"))); 
+const clientPath = join(__dirname, "../..", "client", "dist");
+server.use(express.static(clientPath));
+
+server.get("*", (req, res) => {
+  res.sendFile(join(clientPath, "index.html"));
+});
 server.use(errorHandler);
 server.listen(port, () => {
   log(`API running on http://localhost:${port}`);

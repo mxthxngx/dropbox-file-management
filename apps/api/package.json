@@ -10,9 +10,7 @@
     "start": "node -r esbuild-register ./src/index.ts",
     "test": "jest --detectOpenHandles"
   },
-  "jest": {
-    "preset": "@dropbox/jest-presets/node"
-  },
+
   "dependencies": {
     "@aws-sdk/client-s3": "^3.734.0",
     "@dropbox/logger": "*",
@@ -30,7 +28,6 @@
   },
   "devDependencies": {
     "@dropbox/eslint-config": "*",
-    "@dropbox/jest-presets": "*",
     "@dropbox/typescript-config": "*",
     "@jest/globals": "^29.7.0",
     "@types/body-parser": "^1.19.5",

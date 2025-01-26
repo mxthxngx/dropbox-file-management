@@ -1,90 +1,137 @@
-import React, { useState } from 'react';
-import { manageFileApi,  useUploadFileMutation } from '../../redux/rtk-query/file-manager';
-import IconTextItem from './icon-text-item';
-import { ArrowUpFromLine } from 'lucide-react';
-import { ButtonVariantType } from '../../types/button-variant';
-import {  useAppSelector } from '../../redux/store';
-import { AlertDialogComponent } from './alert';
-import { useLoaderError } from '../../hooks/use-loader-error';
+import React, { useState } from "react";
+import {
+  manageFileApi,
+  useUploadFileMutation,
+} from "../../redux/rtk-query/file-manager";
+import IconTextItem from "./icon-text-item";
+import { ArrowUpFromLine } from "lucide-react";
+import { ButtonVariantType } from "../../types/button-variant";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { AlertDialogComponent } from "./alert";
+import { useLoaderErrorTracker } from "../../hooks/use-loader-tracker";
+import { setError } from "../../redux/slice/error-management-slice";
 
 export default function AddFile() {
   const files = useAppSelector((state) => state.fileManagement.files);
-  const [uploadFile, { isLoading, isError, error }] = useUploadFileMutation();
+  const [uploadFile, { isLoading, error }] = useUploadFileMutation();
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<File[]>([]);
+  const dispatch = useAppDispatch();
   const [refetchFiles] = manageFileApi.endpoints.getFiles.useLazyQuery();
-
-  const loaderErrorComponent = useLoaderError({
-    isLoading,
-    isError,
-    error: error && 'data' in error ? error.data["message"] : "",
-      // @ts-ignore
-    statusCode: error ? error.status : undefined,
-  });
+  useLoaderErrorTracker({ isLoading,error });
   const handleFileUpload = async () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.multiple = true;
     fileInput.onchange = async (event) => {
-      const file = (event.target as HTMLInputElement).files[0];
-      if (!file) return;
-
-      const isFileExist = files.some(f => f.fileName === file.name);
-      if (isFileExist) {
-        setSelectedFile(file);
+      const selected = Array.from((event.target as HTMLInputElement).files || []);
+      const existing = selected.filter((file) =>
+        files.some((f) => f.fileName === file.name)
+      );
+      const newFiles = selected.filter(
+        (file) => !files.some((f) => f.fileName === file.name)
+      );
+      const maxFileSize = 10 * 1024 * 1024; 
+      const oversizedFiles = newFiles.filter(file => file.size > maxFileSize);
+  
+      if (oversizedFiles.length > 0) {
+        dispatch(setError("One or more files exceed the 10MB limit. Please select smaller files."));
+      }
+      if (existing.length > 0) {
+        setExistingFiles(existing);
+        setSelectedFiles(newFiles);
         setDialogOpen(true);
       } else {
-        await uploadNewFile(file);
+        await uploadMultipleFiles(newFiles);
       }
+
     };
     fileInput.click();
   };
 
-  const uploadNewFile = async (file: File) => {
+  const uploadMultipleFiles = async (fileList: File[]) => {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      await uploadFile(formData).unwrap();
-      console.log('File uploaded successfully');
+      const uploadPromises = fileList.map((file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return uploadFile(formData).unwrap();
+      });
+      await Promise.all(uploadPromises);
+      console.log("Files uploaded successfully");
       refetchFiles();
     } catch (error) {
-      console.error('Error uploading file:', error);
+      dispatch(setError("Error uploading files"));
     }
   };
 
-  const handleReplaceFile = async () => {
-    if (!selectedFile) return;
-    await uploadNewFile(selectedFile);
-    setDialogOpen(false);
+  const handleReplaceFiles = async () => {
+    try {
+      const replacePromises = existingFiles.map((file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return uploadFile(formData).unwrap();
+      });
+      await Promise.all(replacePromises);
+      if (selectedFiles.length > 0) {
+        await uploadMultipleFiles(selectedFiles);
+      }
+
+      setDialogOpen(false);
+      setExistingFiles([]);
+      setSelectedFiles([]);
+      refetchFiles();
+    } catch (error) {
+      console.error("Error replacing files:", error);
+    }
   };
 
   const handleCancel = () => {
     setDialogOpen(false);
+    setExistingFiles([]);
+    setSelectedFiles([]);
   };
+
   return (
     <>
-     {!isLoading && !isDialogOpen &&  <IconTextItem className="bg-muted/70 text-gray-900 dark:bg-muted/40 dark:text-gray-200 dark:hover:bg-muted/60 hover:bg-muted/95"
-        variant={ButtonVariantType.Default}
-        icon={<ArrowUpFromLine className="text-grey-500" />}
-        title="Upload File"
-        onClick={handleFileUpload}
-        disabled={isLoading}
-      />
-     }
-      {loaderErrorComponent}
+      {!isLoading && !isDialogOpen && (
+        <IconTextItem
+          className="bg-muted/70 text-gray-900 dark:bg-muted/40 dark:text-gray-200 dark:hover:bg-muted/60 hover:bg-muted/95"
+          variant={ButtonVariantType.Default}
+          icon={<ArrowUpFromLine className="text-grey-500" />}
+          onClick={handleFileUpload}
+          disabled={isLoading}
+        >
+          <span className="text-sm font-medium truncate max-w-[250px]">
+            Upload Files
+          </span>
+        </IconTextItem>
+      )}
       {isDialogOpen && (
         <AlertDialogComponent
-          title="Are you absolutely sure?"
-          cancelText='Cancel'
-          onConfirm={handleReplaceFile}
+          title="Files already exist"
+          cancelText="Cancel"
+          confirmText="Replace Files"
+          onConfirm={handleReplaceFiles}
           onCancel={handleCancel}
           isOpen={isDialogOpen}
         >
           <div className="text-gray-200">
-            A file with the name <strong>{selectedFile?.name}</strong> already exists. Do you want to replace it?
+            The following files already exist:
+            <div className="mt-2 text-sm">
+        {existingFiles.map((file) => (
+          <div key={file.name} className="list-item">
+            <strong>{file.name}</strong>
+          </div>
+        ))}
+      </div>
+            <div className="mt-4">
+              Do you want to replace the existing files? New files will be
+              uploaded automatically.
+            </div>
           </div>
         </AlertDialogComponent>
       )}
-
     </>
   );
 }

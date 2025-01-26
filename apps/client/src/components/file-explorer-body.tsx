@@ -1,36 +1,24 @@
-import React from 'react'
-import { FileDataTable } from './file-data-table'
-import { useGetFilesQuery } from '../redux/rtk-query/file-manager'
-import { useLoaderError } from '../hooks/use-loader-error'
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import { SerializedError } from '@reduxjs/toolkit'
-
+import React from "react";
+import { FileDataTable } from "./file-data-table";
+import { useGetFilesQuery } from "../redux/rtk-query/file-manager";
+import { useLoaderErrorTracker } from "../hooks/use-loader-tracker";
 
 export function FileExplorerBody() {
-  const { data: files, isLoading, isError, error } = useGetFilesQuery()
+  const { data: files, isLoading,  error } = useGetFilesQuery();
+  useLoaderErrorTracker({ isLoading, error });
 
-  const loaderErrorComponent = useLoaderError({
-    isLoading,
-    isError,
-    error: (error as FetchBaseQueryError)?.data as string || 'Unknown error occurred',
-    statusCode: (error as SerializedError)?.name,
-  })
 
   return (
-    <div className='w-full min-h-[600px] max-h-72  p-2'>
-      {loaderErrorComponent ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {loaderErrorComponent} 
-        </div>
-      ) : (
+    <div className="w-full p-2 max-h-[60vh] sm:max-h-[70vh] md:max-h[65h] ]">
+      { 
         <>
           {files && files.length > 0 ? (
             <FileDataTable />
           ) : (
-            <div className='text-gray-500'>Nothing to see here!</div>
+            <div className="text-gray-500">Nothing to see here!</div>
           )}
         </>
-      )}
+      }
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FileMetadata } from '../../types/file';
-import { manageFileApi } from '../rtk-query/file-manager';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { FileMetadata } from "../../types/file";
+import { manageFileApi } from "../rtk-query/file-manager";
 
 interface FileManagerState {
   files: FileMetadata[];
@@ -11,7 +11,7 @@ const initialState: FileManagerState = {
 };
 
 const fileManagerSlice = createSlice({
-  name: 'fileManager',
+  name: "fileManager",
   initialState,
   reducers: {
     setFiles: (state, action: PayloadAction<FileMetadata[]>) => {
@@ -19,9 +19,12 @@ const fileManagerSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(manageFileApi.endpoints.getFiles.matchFulfilled, (state, action) => {
-      state.files = action.payload;
-    });
+    builder.addMatcher(
+      manageFileApi.endpoints.getFiles.matchFulfilled,
+      (state, action) => {
+        state.files = action.payload;
+      },
+    );
   },
 });
 

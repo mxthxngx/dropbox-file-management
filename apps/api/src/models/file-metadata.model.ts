@@ -7,7 +7,7 @@ class FileMetadata extends Model {
   public fileType!: string;
   public fileSize!: number;
   public uploadedAt!: Date;
-  public s3Path!: string; 
+  public s3Path!: string;
 }
 
 FileMetadata.init(
@@ -26,14 +26,14 @@ FileMetadata.init(
       allowNull: false,
     },
     fileSize: {
-      type: DataTypes.INTEGER, 
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     uploadedAt: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    s3Path: { 
+    s3Path: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -42,9 +42,9 @@ FileMetadata.init(
   {
     sequelize,
     modelName: "FileMetadata",
-    tableName: "file_metadata", 
-    timestamps: false, 
-  }
+    tableName: "file_metadata",
+    timestamps: false,
+  },
 );
 
 export default FileMetadata;

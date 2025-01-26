@@ -1,1 +1,1 @@
-export * from '@dropbox/ui/tailwind.config'
+export * from "@dropbox/ui/tailwind.config";

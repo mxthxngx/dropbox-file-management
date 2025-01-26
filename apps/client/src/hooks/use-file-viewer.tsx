@@ -3,7 +3,9 @@ import { useState, useCallback } from "react";
 import { readBuffer } from "@zoley/react-file-preview";
 import { FileMetadata } from "../types/file";
 import { MIME_TO_EXTENSION } from "../types/icon-map";
-import { useLoaderError } from "./use-loader-error";
+import { useLoader } from "./use-loader";
+import { setError } from "../redux/slice/error-management-slice";
+import { useAppDispatch } from "../redux/store";
 
 interface PreviewFile {
   filePath: Blob;
@@ -12,23 +14,17 @@ interface PreviewFile {
 }
 
 export function useFilePreview() {
+  const loader = useLoader();
+  const dispatch = useAppDispatch();
   const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const loaderErrorComponent = useLoaderError({
-    isLoading,
-    isError: !!error,
-    error: error || "",
-});
-
   const previewFileHandler = useCallback(async (file: FileMetadata) => {
-    setIsLoading(true);
-    setError(null);
+    loader.start();
     try {
       const response = await fetch(file.s3Path);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch file.");
+        
+        dispatch(setError("Failed to fetch file."));
       }
 
       const fileBlob = await response.blob();
@@ -39,18 +35,15 @@ export function useFilePreview() {
       setPreviewFile({ filePath, fileType, s3Path: file.s3Path });
     } catch (err) {
       console.error("Error previewing file:", err);
-      setError(err instanceof Error ? err.message : "Error previewing file");
+      dispatch(setError("Error previewing file: " + err));
     } finally {
-      setIsLoading(false);
+      loader.stop();
     }
   }, []);
 
   return {
     previewFile,
-    isLoading,
-    error,
     previewFileHandler,
-    setPreviewFile,
-    loaderErrorComponent,
+    setPreviewFile
   };
 }
