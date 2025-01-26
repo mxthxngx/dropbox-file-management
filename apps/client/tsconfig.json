@@ -9,9 +9,6 @@
     "module": "Preserve",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": ["src", "vite.config.ts", "tailwind.config.ts"],
 }

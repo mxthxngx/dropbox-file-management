@@ -1,14 +1,14 @@
 import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize(
-  process.env.POSTGRES_DB || "dropbox_db", 
+  process.env.POSTGRES_DB || "dropbox_db",
   process.env.POSTGRES_USER || "root",
-  process.env.POSTGRES_PASSWORD || "root", 
+  process.env.POSTGRES_PASSWORD || "root",
   {
     host: process.env.POSTGRES_HOST || "localhost",
     dialect: "postgres",
-    logging: false, 
-  }
+    logging: false,
+  },
 );
 const connectDatabase = async () => {
   try {

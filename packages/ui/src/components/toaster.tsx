@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useToast } from "@dropbox/ui/hooks/use-toast"
+import { useToast } from "@dropbox/ui/hooks/use-toast";
 import {
   Toast,
   ToastClose,
@@ -8,11 +8,11 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@dropbox/ui/components/toast"
-import React from "react"
+} from "@dropbox/ui/components/toast";
+import React from "react";
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toasts } = useToast();
 
   return (
     <ToastProvider>
@@ -28,9 +28,9 @@ export function Toaster() {
             {action}
             <ToastClose />
           </Toast>
-        )
+        );
       })}
       <ToastViewport />
     </ToastProvider>
-  )
+  );
 }

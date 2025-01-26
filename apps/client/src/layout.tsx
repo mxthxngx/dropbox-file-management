@@ -1,43 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import FileExplorer from './pages/file-explorer';
-import { MoonStarIcon } from 'lucide-react';
-import { Button } from '@dropbox/ui/components/button';
-import { ButtonVariantType } from './types/button-variant';
-import { Toaster } from '@dropbox/ui/components/toaster';
+import React, { useState, useEffect } from "react";
+import { MoonStarIcon, SunIcon } from "lucide-react";
+import { Button } from "@dropbox/ui/components/button";
+import { Toaster } from "@dropbox/ui/components/toaster";
+import { ButtonVariantType } from "./types/button-variant";
+import ErrorDialogComponent from "./components/common/error-dialog";
+import { useTheme } from "./hooks/use-theme";
+
+
+
 function Layout({ children }) {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(prefersDark);
-  }, []);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+  const { toggleTheme, isDarkMode } = useTheme();
 
   return (
-    <div className={`h-screen w-full flex items-center justify-center ${darkMode ? 'dark' : ''}`}>
-      <Button 
-        className="absolute top-4 right-4 p-2" 
+    <div
+      className={`h-screen w-screen flex items-center justify-center ${isDarkMode ? "dark" : ""}`}
+    >
+      <Button
+        className="absolute top-4 right-4 p-2"
         variant={ButtonVariantType.Outline}
-        onClick={toggleDarkMode}
+        onClick={toggleTheme}
       >
-       <MoonStarIcon/>
+        <MoonStarIcon />
       </Button>
-     {children}
-      <Toaster/>
+      {children}
+      <Toaster />
+      <ErrorDialogComponent/>
     </div>
   );
 }
 
 export default Layout;
-

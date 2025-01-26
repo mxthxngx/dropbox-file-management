@@ -63,7 +63,7 @@ const getFiles = async (req: Request, res: Response, next: NextFunction) => {
 
 const getFileById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const fileId = req.params.id;  
+    const fileId = req.params.id;
     const file = await FileMetadata.findOne({ where: { id: fileId } });
 
     if (!file) {
@@ -81,4 +81,4 @@ const getFileById = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 };
-export { upload, uploadFile, getFiles,getFileById };
+export { upload, uploadFile, getFiles, getFileById };

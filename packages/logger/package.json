@@ -14,13 +14,10 @@
     "lint": "eslint \"src/**/*.ts*\" --max-warnings 0",
     "test": "jest"
   },
-  "jest": {
-    "preset": "@dropbox/jest-presets/node"
-  },
+
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@dropbox/eslint-config": "*",
-    "@dropbox/jest-presets": "*",
     "@dropbox/typescript-config": "*",
     "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
