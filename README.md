@@ -75,7 +75,7 @@ docker compose -f docker-dev.yml down -v
 * Download file
 
 # In other news
-I was curious to see how a general file management system's UI(creating folders and files inside them) and backend would work and its routing, as I had not worked on it before. Its in a very early stage of implementation, and can be found in the branch called [`file-management`](https://github.com/mxthxngx/dropbox-file-management/tree/file-management).Run the code in development mode.
+I was curious to see how a general file management system's UI(creating folders and files inside them) and backend would work and its routing, as I had not worked on it before. Its in a very early stage of implementation, and can be found in the branch called [`file-management`](https://github.com/mxthxngx/dropbox-file-management/tree/file-management). Please run the code in build mode not development mode.
 You might want to clear out the volumes for the containers before running it. That can be done with the command:
 ```
  docker compose -f docker-compose.yml down -v
