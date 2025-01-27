@@ -5,6 +5,7 @@ import {
   FileJson,
   FileCode,
   FileArchive,
+  Folder,
 } from "lucide-react";
 
 export const FILE_TYPE_ICONS = {
@@ -27,6 +28,8 @@ export const FILE_TYPE_ICONS = {
   "application/typescript": FileCode,
   "application/xml": FileCode,
 
+  // directory
+  "directory": Folder,
   // Document files
   "application/pdf": File,
   "application/msword": FileText,

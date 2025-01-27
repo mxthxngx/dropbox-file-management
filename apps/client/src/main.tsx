@@ -25,7 +25,8 @@ createRoot(document.getElementById("root")!).render(
             <ReactErrorBoundary>
               <Routes>
                 <Route path="file-viewer/:fileId" element={<FileViewer />} />
-                <Route path="*" element={<FileExplorer />} />
+                <Route path=":directoryPath" element={<FileExplorer />} />
+                <Route path = "*" element={<FileExplorer />} />
               </Routes>
             </ReactErrorBoundary>
           </BrowserRouter>

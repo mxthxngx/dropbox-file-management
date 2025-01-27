@@ -1,0 +1,15 @@
+{
+    "extends": "@dropbox/typescript-config/base.json",
+    "compilerOptions": {
+      "lib": ["ES2015", "DOM"],
+      "module": "ESNext",
+      "moduleResolution": "node",  
+      "outDir": "./dist",
+      "target": "ESNext",
+      "rootDir": "./src",
+      "types": ["jest", "node"]
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  

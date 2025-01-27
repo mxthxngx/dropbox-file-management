@@ -36,7 +36,7 @@ export function AlertDialogComponent({
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription
-            className={`max-w-[400px] max-h-[400px] text-wrap overflow-y-auto text-gray-300`}
+            className={`max-w-[400px] max-h-[400px] text-wrap overflow-y-auto text-gray-500 dark:text-gray-200`}
           >
             {children}
           </AlertDialogDescription>

@@ -10,15 +10,21 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { AlertDialogComponent } from "./alert";
 import { useLoaderErrorTracker } from "../../hooks/use-loader-tracker";
 import { setError } from "../../redux/slice/error-management-slice";
+import { useLocation, useParams } from "react-router";
+import { normalizePath } from "@dropbox/utils";
 
 export default function AddFile() {
   const files = useAppSelector((state) => state.fileManagement.files);
   const [uploadFile, { isLoading, error }] = useUploadFileMutation();
+  const location = useLocation();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingFiles, setExistingFiles] = useState<File[]>([]);
   const dispatch = useAppDispatch();
   const [refetchFiles] = manageFileApi.endpoints.getFiles.useLazyQuery();
+  const  directoryPath  = location.pathname.slice(1) || "/";  
+  const normalizedDirectoryPath = normalizePath(directoryPath);
+
   useLoaderErrorTracker({ isLoading,error });
   const handleFileUpload = async () => {
     const fileInput = document.createElement("input");
@@ -55,11 +61,12 @@ export default function AddFile() {
       const uploadPromises = fileList.map((file) => {
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("directoryPath", normalizedDirectoryPath);
         return uploadFile(formData).unwrap();
       });
       await Promise.all(uploadPromises);
       console.log("Files uploaded successfully");
-      refetchFiles();
+      refetchFiles({ directoryPath: normalizedDirectoryPath});
     } catch (error) {
       dispatch(setError("Error uploading files"));
     }
@@ -80,7 +87,7 @@ export default function AddFile() {
       setDialogOpen(false);
       setExistingFiles([]);
       setSelectedFiles([]);
-      refetchFiles();
+      refetchFiles({ directoryPath: normalizePath(directoryPath) });
     } catch (error) {
       console.error("Error replacing files:", error);
     }

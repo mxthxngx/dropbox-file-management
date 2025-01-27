@@ -30,7 +30,7 @@ export function useFilePreview() {
       const fileBlob = await response.blob();
       const filePath = await readBuffer(fileBlob);
 
-      let fileType = file.fileType.toLowerCase();
+      let fileType = file.type.toLowerCase();
       fileType = MIME_TO_EXTENSION[fileType] || "unknown";
       setPreviewFile({ filePath, fileType, s3Path: file.s3Path });
     } catch (err) {

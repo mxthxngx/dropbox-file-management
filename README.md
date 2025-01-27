@@ -75,4 +75,7 @@ docker compose -f docker-dev.yml down -v
 * Download file
 
 # In other news
-I was curious to see how a general file management system's UI(creating folders and files inside them) and backend would work and its routing, as I had not worked on it before. Its in a very early stage of implementation, and can be found in the branch called `file-management`. Take a look and follow the readme in the branch.
+I was curious to see how a general file management system's UI(creating folders and files inside them) and backend would work and its routing, as I had not worked on it before. Its in a very early stage of implementation, and can be found in the branch called `file-management`. 
+
+#### Sneak peak below: 
+![Folder-Creation-Preview](./images/folder-preview.png)

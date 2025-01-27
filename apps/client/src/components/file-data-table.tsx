@@ -38,7 +38,7 @@ import FilePreview from "./common/file-preview";
 import { useCopyToClipboard } from "../hooks/use-clipboard";
 import { useDownload } from "../hooks/use-download";
 import IconTextItem from "./common/icon-text-item";
-import { useNewTab } from "../hooks/use-new-tab";
+import { Link } from "react-router";
 
 export function FileDataTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -55,7 +55,6 @@ export function FileDataTable() {
   } = useFilePreview();
   const { CopyButton } = useCopyToClipboard();
   const { download } = useDownload();
-  const { NewTabIcon } = useNewTab();
   const files = useAppSelector((state) => state.fileManagement.files);
   const closePreview = () => {
     setPreviewFile(null);
@@ -63,42 +62,45 @@ export function FileDataTable() {
 
   const columns: ColumnDef<FileMetadata>[] = [
     {
-      accessorKey: "fileName",
+      accessorKey: "name",
       header: ({ column }) => (
         <Button
           variant={ButtonVariantType.Ghost}
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="w-full justify-start"
         >
-          File Name
+           Name
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
-        const FileIcon = getFileTypeIcon(row.original.fileType);
-        return (
+        const FileIcon = getFileTypeIcon(row.original.type);
+        const type = row.original.type;
+        return type==="directory"?(
           <div
             className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => previewFileHandler(row.original)}
           >
+            <Link to = {`${row.original.directoryPath}`}>
             <IconTextItem
               icon={<FileIcon className="h-4 w-4 text-gray-500" />}
-              onClick={() => previewFileHandler(row.original)}
             >
-               <span className={`text-xs font-medium truncate max-w-[250px]`}>{row.getValue("fileName").toString()}</span>
+               <span className={`text-xs font-medium truncate max-w-[250px]`}>{row.getValue("name").toString()}</span>
               </IconTextItem>
+              </Link>
           </div>
+        ):(
+          <div
+          className="flex items-center space-x-2 cursor-pointer"
+          onClick={() => previewFileHandler(row.original)}
+        >
+          <IconTextItem
+            icon={<FileIcon className="h-4 w-4 text-gray-500" />}
+            onClick={() => previewFileHandler(row.original)}
+          >
+             <span className={`text-xs font-medium truncate max-w-[250px]`}>{row.getValue("name").toString()}</span>
+            </IconTextItem>
+        </div>
         );
-      },
-    },
-    {
-      accessorKey: "Open",
-      header: ({ column }) => (
-        <div className="flex items-center justify-center">Open</div>
-      ),
-      cell: ({ row }) => {
-        const fileId: string = row.original.id;
-        return <NewTabIcon fileId={fileId} />;
       },
     },
     {
@@ -107,43 +109,46 @@ export function FileDataTable() {
         <div className="flex items-center justify-center">Path</div>
       ),
       cell: ({ row }) => {
-        const pathToCopy: string = row.getValue("s3Path");
-        return <CopyButton text={pathToCopy} />;
+        const pathToCopy: string = row.getValue("s3Path")?? "";
+        const type = row.original.type;
+        console.log("Type",type);
+        return row.original.type!="directory"?( <CopyButton text={pathToCopy} />) :( <div className="text-center">-</div>);
       },
     },
     {
-      accessorKey: "fileType",
-      header: "File Type",
+      accessorKey: "Type",
+      header: "Type",
       cell: ({ row }) => (
-        <div className="truncate">{row.getValue("fileType")}</div>
+        <div className="truncate">{row.original.type}</div>
       ),
     },
     {
-      accessorKey: "fileSize",
+      accessorKey: "Size",
       header: () => <div className="text-right">File Size</div>,
       cell: ({ row }) => {
-        const size = row.getValue("fileSize");
+        const size = row.original.size?? 0;
+        console.log("Row",row)
         return (
           <div className="text-right font-medium">
-            {formatFileSize(Number(size))}
+            {size===0?"-": formatFileSize(Number(size))}
           </div>
         );
       },
     },
     {
-      accessorKey: "uploadedAt",
+      accessorKey: "updatedAt",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="w-full justify-end "
         >
-          Uploaded at
+          Updated At
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
-        const date = new Date(row.getValue("uploadedAt"));
+        const date = new Date(row.original.uploadedAt);
         return (
           <div className=" text-right p-2 ">
             {date.toLocaleDateString("en-GB", {
@@ -164,13 +169,16 @@ export function FileDataTable() {
       header: "Download",
       cell: ({ row }) => {
         const s3Path: string = row.getValue("s3Path");
-        return (
+        const type = row.original.type;
+        return type!="directory"?(
           <Button
             variant={ButtonVariantType.Ghost}
             onClick={() => download(s3Path)}
           >
             <Download />
           </Button>
+        ):(
+            <Button variant="ghost" className="pl-5">-</Button>
         );
       },
     },
@@ -201,10 +209,10 @@ export function FileDataTable() {
         <Input
           placeholder="Filter by file name"
           value={
-            (table.getColumn("fileName")?.getFilterValue() as string) ?? ""
+            (table.getColumn("name")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("fileName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-sm"
         />

@@ -3,11 +3,13 @@ import { sequelize } from "../db/postgres";
 
 class FileMetadata extends Model {
   public id!: string;
-  public fileName!: string;
-  public fileType!: string;
-  public fileSize!: number;
-  public uploadedAt!: Date;
-  public s3Path!: string;
+  public name!: string;
+  public type!: string; 
+  public size?: number;
+  public uploadedAt?: Date;
+  public s3Path?: string;
+  public directoryPath!: string;
+  public parentId?: string;
 }
 
 FileMetadata.init(
@@ -17,34 +19,66 @@ FileMetadata.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    fileName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fileType: {
+    type: {
       type: DataTypes.STRING,
       allowNull: false,
+      comment: 'Value is "directory" for directories, file extension for files (pdf, txt, etc)'
     },
-    fileSize: {
+    size: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true, 
     },
     uploadedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: false, 
     },
     s3Path: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: true,
     },
+    directoryPath: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '/',
+      validate: {
+        endsWith(value: string) {
+          if (!value.startsWith('/')) {
+            throw new Error('Directory path must begin with /');
+          }
+        }
+      }
+    },
+    parentPath: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        endsWith(value: string) {
+          if (value!=null && !value.startsWith('/')) {
+            throw new Error('Directory path must start with /');
+          }
+        }
+      }
+    }
   },
   {
     sequelize,
     modelName: "FileMetadata",
     tableName: "file_metadata",
-    timestamps: false,
-  },
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['directoryPath', 'name'],
+        name: 'unique_path_name'
+      }
+    ]
+  }
 );
 
 export default FileMetadata;

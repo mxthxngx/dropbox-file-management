@@ -6,6 +6,7 @@ import {
 import React from "react";
 import AddFile from "./common/add-file";
 import { useAppSelector } from "../redux/store";
+import AddDirectory from "./common/add-directory";
 
 export default function FileExplorerHeading() {
   const files = useAppSelector((state) => state.fileManagement.files);
@@ -16,7 +17,10 @@ export default function FileExplorerHeading() {
           <CardTitle className="text-xl">Dropbox</CardTitle>
           <CardDescription>{files.length} Files</CardDescription>
         </div>
+        <div className="flex space-x-4">
+        <AddDirectory />
         <AddFile />
+        </div>
       </div>
     </CardHeader>
   );

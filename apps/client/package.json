@@ -12,6 +12,7 @@
   "dependencies": {
     "@dropbox/logger": "*",
     "@dropbox/ui": "*",
+    "@dropbox/utils": "*",
     "@fontsource/lato": "^5.1.1",
     "@reduxjs/toolkit": "^2.5.0",
     "@zoley/react-file-preview": "^1.1.11",

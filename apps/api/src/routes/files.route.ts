@@ -1,16 +1,19 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import {
-  getFileById,
-  getFiles,
+  createDirectory,
+  getFileOrDirectoryById,
+  getFilesAndDirectories,
   upload,
   uploadFile,
 } from "../controllers/files.controller";
-import { fileValidationSchema } from "../validations/file.validations";
 import validate from "../middlewares/validate";
+import { directoryValidationSchema } from "../validations/directory.validations";
+import { fileValidationSchema } from "../validations/file.validations";
 
 export const router = express.Router();
 router
-  .route("/upload")
-  .post(validate(fileValidationSchema), upload.single("file"), uploadFile);
-router.route("/get").get(getFiles);
-router.route("/get/:id").get(getFileById);
+  .route("/upload/file")
+  .post(validate(fileValidationSchema),upload.single("file"), uploadFile);
+router.route("/upload/directory").post(validate(directoryValidationSchema), createDirectory);
+router.route("/get").get(getFilesAndDirectories);
+router.route("/get/:id").get(getFileOrDirectoryById);
