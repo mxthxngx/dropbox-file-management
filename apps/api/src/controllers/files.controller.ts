@@ -4,7 +4,7 @@ import multerS3 from "multer-s3";
 import s3 from "../config/s3.config";
 import FileMetadata from "../models/file-metadata.model";
 import { log } from "@dropbox/logger";
-import { normalizePath } from "@dropbox/utils";
+import { normalizePath } from "../utils/normalise";
 const upload = multer({
   storage: multerS3({
     s3: s3,

@@ -15,7 +15,7 @@ import { useLocation } from "react-router";
 import { Button } from "@dropbox/ui/components/button";
 import { Input } from "@dropbox/ui/components/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dropbox/ui/components/tooltip";
-import { normalizePath } from "@dropbox/utils";
+import { normalizePath } from "../../utils/normalise";
 import { FileMetadata } from "src/types/file";
 
 

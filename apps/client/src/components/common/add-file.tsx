@@ -11,7 +11,7 @@ import { AlertDialogComponent } from "./alert";
 import { useLoaderErrorTracker } from "../../hooks/use-loader-tracker";
 import { setError } from "../../redux/slice/error-management-slice";
 import { useLocation, useParams } from "react-router";
-import { normalizePath } from "@dropbox/utils";
+import { normalizePath } from "../../utils/normalise";
 
 export default function AddFile() {
   const files = useAppSelector((state) => state.fileManagement.files);

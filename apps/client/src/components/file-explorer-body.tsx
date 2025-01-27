@@ -3,7 +3,7 @@ import { FileDataTable } from "./file-data-table";
 import { useGetFilesQuery } from "../redux/rtk-query/file-manager";
 import { useLoaderErrorTracker } from "../hooks/use-loader-tracker";
 import { useLocation, useNavigate } from "react-router";
-import { normalizePath } from "@dropbox/utils";
+import { normalizePath } from "../utils/normalise";
 
 export function FileExplorerBody() {
   const location = useLocation();
